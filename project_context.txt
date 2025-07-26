@@ -1,0 +1,237 @@
+Project structure:
+.
+├── LICENSE
+├── README.md
+├── codebase_files.txt
+├── cors-config.sh
+├── index.html
+├── package-lock.json
+├── package.json
+├── project_context.txt
+├── public
+│   ├── android-chrome-192x192.png
+│   ├── android-chrome-512x512.png
+│   ├── apple-touch-icon.png
+│   ├── browserconfig.xml
+│   ├── favicon-16x16.png
+│   ├── favicon-32x32.png
+│   ├── favicon.ico
+│   ├── index.html
+│   ├── locales
+│   │   ├── ar
+│   │   ├── de
+│   │   ├── en
+│   │   ├── fr
+│   │   ├── it
+│   │   ├── ml
+│   │   ├── pt
+│   │   ├── pt-BR
+│   │   └── zh-CN
+│   ├── manifest.json
+│   ├── mstile-144x144.png
+│   ├── mstile-150x150.png
+│   ├── mstile-310x150.png
+│   ├── mstile-310x310.png
+│   ├── mstile-70x70.png
+│   ├── offline.html
+│   ├── safari-pinned-tab.svg
+│   └── service-worker.js
+├── src
+│   ├── animations.css
+│   ├── app.css
+│   ├── app.tsx
+│   ├── components
+│   │   ├── add-files
+│   │   ├── box
+│   │   ├── cid-renderer
+│   │   ├── download-files
+│   │   ├── dropdown
+│   │   ├── file
+│   │   ├── file-tree
+│   │   ├── footer
+│   │   ├── header
+│   │   ├── headline
+│   │   ├── info
+│   │   ├── loader
+│   │   ├── modal
+│   │   ├── node-info
+│   │   └── share-all-files
+│   ├── constants
+│   │   └── files.ts
+│   ├── hooks
+│   │   ├── use-current-page.ts
+│   │   ├── use-files.ts
+│   │   ├── use-helia.ts
+│   │   └── use-interval.ts
+│   ├── i18n-decorator.tsx
+│   ├── i18n.ts
+│   ├── index.tsx
+│   ├── lib
+│   │   ├── languages.json
+│   │   ├── languages.ts
+│   │   ├── share-addresses.ts
+│   │   └── size.ts
+│   ├── media
+│   │   ├── icons
+│   │   ├── images
+│   │   └── logos
+│   ├── page
+│   │   └── page.tsx
+│   ├── providers
+│   │   ├── files-provider.tsx
+│   │   └── helia-provider.tsx
+│   ├── register-service-worker.js
+│   ├── types.d.ts
+│   └── util.ts
+├── test
+│   └── async-it-to-file.spec.ts
+├── tsconfig.json
+└── vite.config.ts
+
+39 directories, 49 files
+Package.json content:
+{
+  "name": "ipfs-share-files",
+  "version": "0.0.0",
+  "description": "Share files via IPFS",
+  "leadMaintainer": "Diogo Silva <fsdiogo@gmail.com>",
+  "private": true,
+  "type": "module",
+  "main": "src/index.tsx",
+  "eslintConfig": {
+    "settings": {
+      "react": {
+        "version": "17.0.1"
+      }
+    },
+    "extends": [
+      "plugin:react/recommended",
+      "plugin:jsx-a11y/recommended",
+      "ipfs"
+    ],
+    "plugins": [
+      "react"
+    ],
+    "parserOptions": {
+      "project": true,
+      "sourceType": "module",
+      "ecmaFeatures": {
+        "jsx": true
+      }
+    },
+    "rules": {
+      "react/prop-types": "off",
+      "no-console": [
+        "error",
+        {
+          "allow": [
+            "error",
+            "info",
+            "time",
+            "timeEnd",
+            "warn"
+          ]
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "clean": "aegir clean dist aegir-build",
+    "start": "vite",
+    "prebuild": "lol public/locales > src/lib/languages.json",
+    "build": "run-s dep-check lint build:aegir build:vite",
+    "build:vite": "vite build",
+    "build:aegir": "aegir build",
+    "dep-check": "aegir dep-check",
+    "lint": "aegir lint",
+    "pretest": "run-s build:aegir",
+    "test": "aegir test",
+    "test:chrome": "aegir test -t browser --cov",
+    "test:chrome-webworker": "aegir test -t webworker",
+    "test:firefox": "aegir test -t browser -- --browser firefox",
+    "test:firefox-webworker": "aegir test -t webworker -- --browser firefox",
+    "test:node": "aegir test -t node --cov",
+    "test:electron-main": "aegir test -t electron-main",
+    "test:coverage": "echo 'not yet' || react-scripts test --coverage",
+    "test:serve": "ecstatic build --cache=0 --port=3001",
+    "test:e2e": "echo 'not yet' || react-scripts test --testMatch **/test/e2e/**/*.test.js",
+    "test:e2e:ci": "URL=http://localhost:3001 run-p --race test:serve test:e2e",
+    "storybook": "storybook dev -p 9009 -s public",
+    "build-storybook": "storybook build"
+  },
+  "dependencies": {
+    "@helia/mfs": "^4.0.3",
+    "@helia/unixfs": "^4.0.3",
+    "@ipshipyard/libp2p-inspector-metrics": "^1.0.3",
+    "@multiformats/multiaddr": "^12.3.4",
+    "@multiformats/multiaddr-matcher": "^1.6.0",
+    "@sgtpooki/file-type": "^1.0.1",
+    "blob-to-it": "^2.0.8",
+    "blockstore-idb": "^2.0.1",
+    "classnames": "^2.5.1",
+    "datastore-idb": "^3.0.1",
+    "helia": "^5.3.0",
+    "i18next": "^23.15.2",
+    "i18next-browser-languagedetector": "^8.0.0",
+    "i18next-chained-backend": "^4.6.2",
+    "i18next-http-backend": "^2.6.2",
+    "i18next-icu": "^2.3.0",
+    "i18next-localstorage-backend": "^4.2.0",
+    "ipfs-css": "^1.4.0",
+    "is-ipfs": "^8.0.4",
+    "it-to-browser-readablestream": "^2.0.10",
+    "jszip": "^3.10.1",
+    "multiformats": "^13.3.2",
+    "qrcode.react": "^4.0.1",
+    "react": "^18.3.1",
+    "react-circular-progressbar": "^2.1.0",
+    "react-copy-to-clipboard": "^5.1.0",
+    "react-dnd": "^16.0.1",
+    "react-dnd-html5-backend": "^16.0.1",
+    "react-dom": "^18.3.1",
+    "react-helmet": "^6.1.0",
+    "react-i18next": "^15.0.2",
+    "react-loader-spinner": "^6.1.6",
+    "react-modal": "^3.16.1",
+    "tachyons": "^4.12.0",
+    "wouter": "^3.3.5"
+  },
+  "devDependencies": {
+    "@libp2p/interface": "^2.7.0",
+    "@olizilla/lol": "2.0.0",
+    "@storybook/react": "^8.3.5",
+    "@storybook/react-vite": "^8.3.5",
+    "@types/mocha": "^10.0.9",
+    "@types/react-copy-to-clipboard": "^5.0.7",
+    "@types/react-dom": "^18.3.0",
+    "@types/react-helmet": "^6.1.11",
+    "@types/react-modal": "^3.16.3",
+    "@types/shortid": "^0.0.32",
+    "@vitejs/plugin-react": "^4.3.2",
+    "aegir": "^44.1.2",
+    "ecstatic": "^4.1.4",
+    "eslint-plugin-jsx-a11y": "^6.10.0",
+    "eslint-plugin-react": "^7.37.1",
+    "interface-blockstore": "^5.3.1",
+    "interface-datastore": "^8.3.1",
+    "npm-run-all": "^4.1.5",
+    "storybook": "^8.3.5",
+    "uint8arrays": "^5.1.0",
+    "vite": "^5.4.8",
+    "vite-plugin-svgr": "^4.2.0",
+    "wherearewe": "^2.0.1"
+  },
+  "homepage": "./",
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
